@@ -24,7 +24,7 @@ namespace KeyboardMouseSimulation
         {
             bool isKeyboard = true;
             Console.WriteLine("Enter Port (eg. COM3) : ");
-            var portName = Console.ReadLine();
+            var portName = "COM3"; //Console.ReadLine();
             SerialPort port = new SerialPort(portName, 9600, Parity.None, 8, StopBits.One);
             try
             {
@@ -40,7 +40,7 @@ namespace KeyboardMouseSimulation
             while (true)
             {
                 var rec = port.ReadLine();
-                isKeyboard = rec == "1000" ? !isKeyboard : isKeyboard;
+                isKeyboard = rec.Contains("255") ? !isKeyboard : isKeyboard;
 
                 Console.WriteLine("recieved no. " + count + " : " + rec);
                 count++;
@@ -64,15 +64,24 @@ namespace KeyboardMouseSimulation
                 }
                 else
                 {
-                    var keys = rec.Split('\r')[0].Split(',');
-                    try
+                    var keys = rec.Split('\r');
+
+                    if (keys[0].Contains(","))  // normal mouse movement
                     {
-                        int x = int.Parse(keys[0].TrimEnd('\r', '\n'));
-                        int y = int.Parse(keys[1].TrimEnd('\r', '\n'));
-                        RelativeMove(x, -1 * y);
+
+                        keys = keys[0].Split(',');
+                        try
+                        {
+                            int x = int.Parse(keys[0].TrimEnd('\r', '\n'));
+                            int y = int.Parse(keys[1].TrimEnd('\r', '\n'));
+                            RelativeMove(x, -1 * y);
+                        }
+                        catch
+                        {
+                        }
                     }
-                    catch
-                    {
+                    else    // mouse click
+                    {   
                     }
                 }
             }
