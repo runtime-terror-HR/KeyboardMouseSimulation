@@ -65,23 +65,25 @@ namespace KeyboardMouseSimulation
                 else
                 {
                     var keys = rec.Split('\r');
-
-                    if (keys[0].Contains(","))  // normal mouse movement
+                    try
                     {
-
-                        keys = keys[0].Split(',');
-                        try
+                        if (keys[0].Contains(","))  // normal mouse movement
                         {
-                            int x = int.Parse(keys[0].TrimEnd('\r', '\n'));
-                            int y = int.Parse(keys[1].TrimEnd('\r', '\n'));
-                            RelativeMove(x, -1 * y);
+                            keys = keys[0].Split(',');
+                        
+                                int x = int.Parse(keys[0].TrimEnd('\r', '\n'));
+                                int y = int.Parse(keys[1].TrimEnd('\r', '\n'));
+                                RelativeMove(x, -1 * y);
                         }
-                        catch
+                        else    // mouse click
                         {
+                            var keyval = rec.TrimEnd('\r', '\n');
+                            var tem = (int)new Int32Converter().ConvertFromString(keyval);
+                            mouse_event(tem, 0, 0, 0, 0);
                         }
                     }
-                    else    // mouse click
-                    {   
+                    catch
+                    {
                     }
                 }
             }
