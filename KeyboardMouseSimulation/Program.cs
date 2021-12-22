@@ -24,16 +24,18 @@ namespace KeyboardMouseSimulation
         {
             bool isKeyboard = true;
             Console.WriteLine("Enter Port (eg. COM3) : ");
-            var portName = "COM3"; //Console.ReadLine();
+            var portName = Console.ReadLine();
             SerialPort port = new SerialPort(portName, 9600, Parity.None, 8, StopBits.One);
-            try
+            while(!port.IsOpen)
             {
-                port.Open();
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine("error opening port " + ex.Message);
-                return;
+                try
+                {
+                    port.Open();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("error opening port " + ex.Message);
+                }
             }
 
             int count = 0;
@@ -71,9 +73,9 @@ namespace KeyboardMouseSimulation
                         {
                             keys = keys[0].Split(',');
                         
-                                int x = int.Parse(keys[0].TrimEnd('\r', '\n'));
-                                int y = int.Parse(keys[1].TrimEnd('\r', '\n'));
-                                RelativeMove(x, -1 * y);
+                            int x = int.Parse(keys[0].TrimEnd('\r', '\n'));
+                            int y = int.Parse(keys[1].TrimEnd('\r', '\n'));
+                            RelativeMove(x, -1 * y);
                         }
                         else    // mouse click
                         {
